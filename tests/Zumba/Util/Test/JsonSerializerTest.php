@@ -301,4 +301,18 @@ class JsonSerializerTest extends \PHPUnit_Framework_TestCase {
 		$this->assertSame($obj->c2->c3_copy, $obj->c2->c3);
 	}
 
+	/**
+	 * Test that the serializer can handle a binary string of malformed UTF8
+	 * 
+	 * @return void
+	 * @group bin_string
+	 */
+	public function testSerializeBinaryString() {
+		$encrypted = file_get_contents(__DIR__ . '/bin-fixture.txt');
+		$serialized = $this->serializer->serialize(['encrypted' => $encrypted ]);
+
+		$expected = json_encode([ 'encrypted' => utf8_encode($encrypted) ], JSON_UNESCAPED_UNICODE); 
+		$this->assertEquals($expected, $serialized);
+	}
+
 }

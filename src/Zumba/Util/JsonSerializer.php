@@ -109,11 +109,16 @@ class JsonSerializer {
 	 * @throws Zumba\Exception\JsonSerializerException
 	 */
 	protected function serializeData($value) {
+
 		if (is_scalar($value) || $value === null) {
 			if (is_float($value) && strpos((string)$value, '.') === false) {
 				// Because the PHP bug #50224, the float numbers with no
 				// precision numbers are converted to integers when encoded
 				$value = static::FLOAT_ADAPTER . '(' . $value . '.0)';
+			}
+	
+			if (is_string($value) && mb_detect_encoding($value, 'UTF-8', true) === false) {
+				$value = utf8_encode($value);
 			}
 			return $value;
 		}

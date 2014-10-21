@@ -203,6 +203,11 @@ class JsonSerializer {
 	 */
 	protected function unserializeData($value) {
 		if (is_scalar($value) || $value === null) {
+
+			if (is_string($value) && mb_detect_encoding($value, 'UTF-8', true) && ctype_print(utf8_decode($value))) {
+				$value = utf8_decode($value);
+			}
+
 			return $value;
 		}
 		return isset($value[static::CLASS_IDENTIFIER_KEY]) ?

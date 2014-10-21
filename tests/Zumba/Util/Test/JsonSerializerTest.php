@@ -308,11 +308,28 @@ class JsonSerializerTest extends \PHPUnit_Framework_TestCase {
 	 * @group bin_string
 	 */
 	public function testSerializeBinaryString() {
-		$encrypted = file_get_contents(__DIR__ . '/bin-fixture.txt');
+		$encrypted = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'bin-fixture.txt');
 		$serialized = $this->serializer->serialize(['encrypted' => $encrypted ]);
 
 		$expected = json_encode([ 'encrypted' => utf8_encode($encrypted) ], JSON_UNESCAPED_UNICODE); 
 		$this->assertEquals($expected, $serialized);
 	}
 
+	/**
+	 * Test that the serialize can deserialize regular strings and UTF8 encoded strings
+         *
+         * @return void
+	 * @group bin_string
+	 */
+	public function testDeserializeUtf8EncodedStrings() {
+		$regular = [ 'regular' => 'some text'];
+		$serialized = $this->serializer->serialize($regular);
+		$this->assertEquals($regular, $this->serializer->unserialize($serialized));
+
+		$encryptedText = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'bin-fixture.txt');
+		$encrypted = ['encrypted' => $encryptedText];
+		$serialized = $this->serializer->serialize($encrypted);
+		$this->assertEquals($encrypted, $this->serializer->unserialize($serialized));
+
+	}
 }
